@@ -1,8 +1,10 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package marotagelanguage;
-
 import gals.*;
-import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,21 +17,16 @@ public class MarotageLanguage {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
         Stack<Double> pilha = new Stack<Double>();
         try {
-            Lexico lex = new Lexico("a = 2;\n" +
-                                    "b = a + 2;\n"+
-                                    "rudshow(b);");
-            System.out.println("a = 2;\n" +
-                                    "b = a +2;\n"+
-                                    "rudshow(b);");
-            Sintatico sin = new Sintatico();
-            Semantico sem = new Semantico(pilha);
+            Lexico lex = new Lexico("2 + 9");
+            
+            Sintatico sin = new Sintatico(pilha);
+            Semantico sem = new Semantico();
             sin.parse(lex, sem);
-            
-            
-        } catch (SyntaticError | LexicalError | SemanticError ex) {
+            System.out.println("Resultado: " + pilha.pop());
+        } catch (LexicalError ex) {
             Logger.getLogger(MarotageLanguage.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
