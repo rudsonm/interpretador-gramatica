@@ -1,3 +1,5 @@
+package gals;
+
 public interface ScannerConstants
 {
     int[][] SCANNER_TABLE = 
@@ -29,7 +31,7 @@ public interface ScannerConstants
 
     String[] SCANNER_ERROR =
     {
-        "Caractere não esperado",
+        "Caractere nï¿½o esperado",
         "",
         "",
         "",

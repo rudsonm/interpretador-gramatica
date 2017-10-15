@@ -1,33 +1,31 @@
-public class Lexico implements Constants
-{
+package gals;
+
+public class Lexico implements Constants {
+
     private int position;
     private String input;
 
-    public Lexico()
-    {
+    public Lexico() {
         this("");
     }
 
-    public Lexico(String input)
-    {
-        setInput(input);
+    public Lexico(String input) {
+        this.input = input;
     }
 
-    public void setInput(String input)
-    {
+    public void setInput(String input) {
         this.input = input;
         setPosition(0);
     }
 
-    public void setPosition(int pos)
-    {
+    public void setPosition(int pos) {
         position = pos;
     }
 
-    public Token nextToken() throws LexicalError
-    {
-        if ( ! hasInput() )
+    public Token nextToken() throws LexicalError {
+        if (!hasInput()) {
             return null;
+        }
 
         int start = position;
 
@@ -36,63 +34,57 @@ public class Lexico implements Constants
         int endState = -1;
         int end = -1;
 
-        while (hasInput())
-        {
+        while (hasInput()) {
             lastState = state;
             state = nextState(nextChar(), state);
 
-            if (state < 0)
+            if (state < 0) {
                 break;
-
-            else
-            {
-                if (tokenForState(state) >= 0)
-                {
+            } else {
+                if (tokenForState(state) >= 0) {
                     endState = state;
                     end = position;
                 }
             }
         }
-        if (endState < 0 || (endState != state && tokenForState(lastState) == -2))
+        if (endState < 0 || (endState != state && tokenForState(lastState) == -2)) {
             throw new LexicalError(SCANNER_ERROR[lastState], start);
+        }
 
         position = end;
 
         int token = tokenForState(endState);
 
-        if (token == 0)
+        if (token == 0) {
             return nextToken();
-        else
-        {
+        } else {
             String lexeme = input.substring(start, end);
             return new Token(token, lexeme, start);
         }
     }
 
-    private int nextState(char c, int state)
-    {
+    private int nextState(char c, int state) {
         int next = SCANNER_TABLE[state][c];
         return next;
     }
 
-    private int tokenForState(int state)
-    {
-        if (state < 0 || state >= TOKEN_STATE.length)
+    private int tokenForState(int state) {
+        if (state < 0 || state >= TOKEN_STATE.length) {
             return -1;
+        }
 
         return TOKEN_STATE[state];
     }
 
-    private boolean hasInput()
-    {
+    private boolean hasInput() {
         return position < input.length();
     }
 
-    private char nextChar()
-    {
-        if (hasInput())
+    private char nextChar() {
+        if (hasInput()) {
             return input.charAt(position++);
-        else
+        } else {
             return (char) -1;
+        }
     }
 }

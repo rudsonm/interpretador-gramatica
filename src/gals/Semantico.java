@@ -1,47 +1,59 @@
+package gals;
 
 import java.util.HashMap;
 import java.util.Stack;
 
-public class Semantico implements Constants
-{
-    public Stack<Double> pilha = new Stack<Double>();
-    
+public class Semantico implements Constants {
+
+    public static Stack<Double> pilha = new Stack<Double>();
+
+    private static boolean querImprimir = false;
+    private static boolean querAtribuir = false;
+    private static HashMap<String, Double> variaveis = new HashMap<>();
+    private static String variavel1 = "";
+    private static String variavel2 = "";
+
     public Semantico(Stack<Double> pilha) {
         this.pilha = pilha;
     }
-    
-    public void executeAction(int action, Token token)	throws SemanticError
-    {
-        System.out.println("A��o #"+action+", Token: "+token);
-        String variavel = null;
-        HashMap<String, Double> variaveis = new HashMap<>();
-        boolean querImprimir = false;
-        boolean querAtribuir = false;
+
+    public void executeAction(int action, Token token) throws SemanticError {
+        System.out.println("Ação #" + action + ", Token: " + token);
+        //System.out.println( token.getLexeme());
+
         Double a, b;
-        switch(action){
+        switch (action) {
             case 0:
                 a = Double.parseDouble(token.getLexeme());
-                if(querAtribuir) {
-                    variaveis.replace(variavel, a);
+                if (querAtribuir) {
+                    variaveis.replace(variavel1, a);
                     querAtribuir = false;
-                } else {
-                    pilha.push(a);
-                }                
-            break;
-            case 1:                
-                variavel = token.getLexeme();
+                } 
+                  pilha.push(a);
+                break;
+            case 1:
+                variavel1 = token.getLexeme();
+                
                 // verificar se existe
-                variaveis.put(variavel, 0.0);
-                if(querImprimir) {
-                    System.out.println(variavel);
+                if (variaveis.containsKey(variavel1)) {
+                    variaveis.replace(variavel2, variaveis.get(token.getLexeme()));
+                } else {
+                    variaveis.put(variavel1, 0.0);
+                }
+                if (querImprimir) {
+                    System.out.println(variaveis.get(token.getLexeme()));
                     querImprimir = false;
                 }
+                variavel2 = variavel1;
                 break;
             case 2:
-                a = pilha.pop();
-                b = pilha.pop();
+                
+                a = pilha.peek();
+                b = pilha.peek();
                 pilha.push(a + b);
+                
                 break;
+                
             case 3:
                 a = pilha.pop();
                 b = pilha.pop();
@@ -67,16 +79,21 @@ public class Semantico implements Constants
                 break;
             case 8:
                 // abre
+               // System.out.println("abrir paretese impressao(");
                 break;
             case 9:
                 // fecha
+                //System.out.println("fechar paretese impressao)");
                 break;
             case 10:
                 // fim
+                variavel1 = "";
+                variavel2 = "";
                 break;
             case 11:
                 querImprimir = true;
+                //System.out.println("Teste impressao");
                 break;
         }
-    }	
+    }
 }
