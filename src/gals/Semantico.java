@@ -2,64 +2,83 @@ package gals;
 
 import java.util.HashMap;
 import java.util.Stack;
+import javax.swing.JOptionPane;
+import marotagelanguage.MarotageFRM;
 
 public class Semantico implements Constants {
 
     public static Stack<Double> pilha = new Stack<Double>();
     private static String variavel1 = "";
     private static String variavel2 = "";
+    private static String variavelAtribuicao = "";
     private static HashMap<String, Double> variaveis = new HashMap<>();
     private static boolean querImprimir = false;
     private static boolean querAtribuir = false;
+    private static boolean querSomar = false;
+    private static Double soma = 0.0;
 
     public Semantico(Stack<Double> pilha) {
         this.pilha = pilha;
     }
 
     public void executeAction(int action, Token token) throws SemanticError {
-        System.out.println("Ação #" + action + ", Token: " + token);
-
+        //System.out.println("Ação #" + action + ", Token: " + token);
+        //System.out.println(token.getLexeme());
         Double a, b;
         switch (action) {
 
-            case 0:
+            case 0: //atribuir valores as variaveis
 
                 a = Double.parseDouble(token.getLexeme());
+                pilha.push(a);
+
+                if (querSomar) {
+                    soma = pilha.pop() + pilha.pop();
+                    querSomar = false;
+                    //System.out.println(soma);
+                    atribuir(variavel1, soma);
+                }
 
                 if (querAtribuir) {
-                    variaveis.replace(variavel1, a);
+                    atribuir(variavel1, a);
                     querAtribuir = false;
                 }
 
-                pilha.push(a);
+//                if (querImprimir) {
+//
+//                    imprimir(variavel1);
+//                }
 
                 break;
 
-            case 1:
-
+            case 1: // cria variavel
+                
                 variavel1 = token.getLexeme();
-                
                 // verificar se existe
-                if (variaveis.containsKey(variavel1)) {
-                    variaveis.replace(variavel2, variaveis.get(variavel1));
-                } else {
-                    variaveis.put(variavel1, 0.0);
+                if (!variaveis.containsKey(token.getLexeme())) {// && querAtribuir) {
+                    
+                    criarVariavelNova(token.getLexeme());
+                    
+                }else{
+                    
+                    atribuir(variavel2, variaveis.get(variavel1));
                 }
                 
-                if (querImprimir) {
-                    System.out.println(variavel1);
-                    querImprimir = false;
-                }
 
+                if (querImprimir) {
+
+                    imprimir(variavel1);
+                    
+                }
+                
                 variavel2 = variavel1;
 
                 break;
 
             case 2:
 
-                a = pilha.pop();
-                b = pilha.pop();
-                pilha.push(a + b);
+                //a = pilha.pop();
+                querSomar = true;
 
                 break;
 
@@ -95,10 +114,9 @@ public class Semantico implements Constants {
 
                 break;
 
-            case 7:
+            case 7: // atribuir valor á variaveis
 
                 querAtribuir = true;
-
                 break;
 
             case 8:
@@ -114,8 +132,8 @@ public class Semantico implements Constants {
             case 10:
 
                 // fim
-                variavel1 = "";
-                variavel2 = "";
+                //variavel1 = "";
+                //variavel2 = "";
                 break;
 
             case 11:
@@ -125,4 +143,27 @@ public class Semantico implements Constants {
                 break;
         }
     }
+
+    private void imprimir(String variavel) {
+        querImprimir = false;
+        System.out.println(variaveis.get(variavel));
+        MarotageFRM.getInstance().alterarTextArea(""+variaveis.get(variavel));
+        
+        
+    }
+
+    private void atribuir(String variavel, Double valor) {
+
+       
+                variaveis.replace(variavel, valor);
+        
+    }
+
+    private void criarVariavelNova(String variavel) {
+
+        //variavel nova
+        variaveis.put(variavel, 0.0);
+
+    }
+
 }

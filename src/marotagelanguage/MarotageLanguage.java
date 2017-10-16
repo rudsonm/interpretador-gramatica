@@ -17,11 +17,10 @@ public class MarotageLanguage {
     public static void main(String[] args) throws SemanticError {
         Stack<Double> pilha = new Stack<Double>();
         try {
-            Lexico lex = new Lexico("a = 2;\n" +
-                                    "b = a;\n" +
-                                    "b = b + 2;\n" +
-                                    "rudshow(b);");
-            
+            Lexico lex = new Lexico("a = 2 - 2;\n"+ 
+                                    "rudshow(a);");
+            System.out.println("a = 2 - 2;\n"+ 
+                                    "rudshow(a);");
             Sintatico sin = new Sintatico();
             Semantico sem = new Semantico(pilha);
             sin.parse(lex, sem);
