@@ -40,9 +40,10 @@ fim: ";"
 #Grammar
 <comandos> ::= <comandos> <comando> | <comando>;
 <comando> ::= <atribuir> | <exibir>;
-<exibir> ::= #11imprimir #8abre #1variavel #9fecha #10fim;
-<atribuir> ::= #1variavel #7recebe <A> #10fim | #1variavel #10fim;
-<A> ::= <A> #2mais <B> | <A> #3menos <B> | <B>;
-<B> ::= <B> #4mult <C> | <B> #5div <C> | <B> #6exponenciacao <C> | <C>;
-<C> ::= #3menos <C> | <D> ;
-<D> ::= #8abre <A> #9fecha | #0numero | #1variavel;
+<exibir> ::= imprimir #11 abre #8 variavel #1 fecha #9 fim #10;
+<atribuir> ::= variavel #1 recebe #7 <A> fim #10 | variavel #1 fim #10;
+<A> ::= <A> mais #2 <B> | <A> menos #3 <B> | <B>;
+<B> ::= <B> mult #4 <C> | <B> div #5 <C> | <B> exponenciacao #6 <C> | <C>;
+<C> ::= menos #3 <C> | <D> ;
+<D> ::= abre #8 <A> fecha #9 | numero #0 | variavel #1;
+<E> ::= abre #8 <A> fecha #9 | numero #0 | variavel #1;
