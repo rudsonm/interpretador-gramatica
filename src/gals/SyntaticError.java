@@ -1,4 +1,3 @@
-
 package gals;
 
 public class SyntaticError extends AnalysisError

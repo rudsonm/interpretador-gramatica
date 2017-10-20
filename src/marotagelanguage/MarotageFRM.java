@@ -11,14 +11,9 @@ import gals.SemanticError;
 import gals.Semantico;
 import gals.Sintatico;
 import gals.SyntaticError;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -55,15 +50,8 @@ public class MarotageFRM extends javax.swing.JFrame {
     
     public void alterarTextArea(String texto){
         System.out.println("alterando texto resultado");
-        JOptionPane.showMessageDialog(this, texto);
-        JLabel jLabel = new JLabel();
-        jLabel.setText(texto);
-        
-        jpResultado.setLayout(new GridBagLayout()); 
-        jpResultado.add(jLabel);
-        jpResultado.repaint();
-        this.getContentPane().repaint();
-        
+        this.jtaResultado.setText("");
+        this.jtaResultado.append(texto);
        
     }
 
@@ -84,10 +72,11 @@ public class MarotageFRM extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jtaCodigoFonte = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jtaResultado = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jbtCompilarExecutar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jpResultado = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ML - Marotage Language");
@@ -95,6 +84,11 @@ public class MarotageFRM extends javax.swing.JFrame {
         jtaCodigoFonte.setColumns(20);
         jtaCodigoFonte.setRows(5);
         jScrollPane1.setViewportView(jtaCodigoFonte);
+
+        jtaResultado.setEditable(false);
+        jtaResultado.setColumns(20);
+        jtaResultado.setRows(5);
+        jScrollPane2.setViewportView(jtaResultado);
 
         jLabel1.setText("Crie seu código fonte");
 
@@ -107,19 +101,6 @@ public class MarotageFRM extends javax.swing.JFrame {
 
         jLabel2.setText("Saída");
 
-        jpResultado.setBackground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout jpResultadoLayout = new javax.swing.GroupLayout(jpResultado);
-        jpResultado.setLayout(jpResultadoLayout);
-        jpResultadoLayout.setHorizontalGroup(
-            jpResultadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jpResultadoLayout.setVerticalGroup(
-            jpResultadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -128,12 +109,12 @@ public class MarotageFRM extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 495, Short.MAX_VALUE)
                         .addComponent(jbtCompilarExecutar))
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jpResultado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -147,8 +128,8 @@ public class MarotageFRM extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addGap(2, 2, 2)
-                .addComponent(jpResultado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -158,13 +139,12 @@ public class MarotageFRM extends javax.swing.JFrame {
 
     private void jbtCompilarExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtCompilarExecutarActionPerformed
 
-        
+        Stack<Double> pilha = new Stack<Double>();
         try {
-            String texto = jtaCodigoFonte.getText();
-            Lexico lex = new Lexico(texto);
-            System.out.println(texto);
+            Lexico lex = new Lexico(jtaCodigoFonte.getText());
+            System.out.println(jtaCodigoFonte.getText());
             Sintatico sin = new Sintatico();
-            Semantico sem = new Semantico();
+            Semantico sem = new Semantico(pilha);
             sin.parse(lex, sem);
             
         } catch (LexicalError | SemanticError |SyntaticError ex) {
@@ -212,9 +192,10 @@ public class MarotageFRM extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton jbtCompilarExecutar;
-    private javax.swing.JPanel jpResultado;
     private javax.swing.JTextArea jtaCodigoFonte;
+    public javax.swing.JTextArea jtaResultado;
     // End of variables declaration//GEN-END:variables
 
    

@@ -1,7 +1,5 @@
 package gals;
 
-import javax.swing.JOptionPane;
-
 public class Lexico implements Constants
 {
     private int position;
@@ -14,13 +12,11 @@ public class Lexico implements Constants
 
     public Lexico(String input)
     {
-        JOptionPane.showMessageDialog(null,input);
         setInput(input);
     }
 
     public void setInput(String input)
     {
-        
         this.input = input;
         setPosition(0);
     }
