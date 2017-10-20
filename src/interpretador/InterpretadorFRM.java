@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package marotagelanguage;
+package interpretador;
 
 import gals.LexicalError;
 import gals.Lexico;
@@ -11,31 +11,40 @@ import gals.SemanticError;
 import gals.Semantico;
 import gals.Sintatico;
 import gals.SyntaticError;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author DG
  */
-public class MarotageFRM extends javax.swing.JFrame {
+public class InterpretadorFRM extends javax.swing.JFrame {
 
     
     private static int cont = 0;
-    private static MarotageFRM fRMMarotageLanguage;
+    private static InterpretadorFRM fRMMarotageLanguage;
     
     /**
      * Creates new form MarotageFRM
      */
-    public MarotageFRM() {
+    public InterpretadorFRM() {
         initComponents();
+        setExtendedState(MAXIMIZED_BOTH);
+        setIconImage(new ImageIcon(getClass().getResource("maxresdefault.jpg")).getImage());
     }
     
-     public static synchronized MarotageFRM getInstance() {
+     public static synchronized InterpretadorFRM getInstance() {
 
         if (getfRMMarotageLanguage() == null) {
-            setfRMMarotageLanguage(new MarotageFRM());
+            setfRMMarotageLanguage(new InterpretadorFRM());
             System.out.println(cont++);
         }
         return getfRMMarotageLanguage();
@@ -44,21 +53,25 @@ public class MarotageFRM extends javax.swing.JFrame {
      /**
      * @return the fRMMarotageLanguage
      */
-    public static MarotageFRM getfRMMarotageLanguage() {
+    public static InterpretadorFRM getfRMMarotageLanguage() {
         return fRMMarotageLanguage;
     }
     
     public void alterarTextArea(String texto){
         System.out.println("alterando texto resultado");
-        this.jtaResultado.setText("");
-        this.jtaResultado.append(texto);
+        JOptionPane.showMessageDialog(this, texto);
+        JLabel jLabel = new JLabel();
+        jLabel.setText(texto);
+        
+        this.getContentPane().repaint();
+        
        
     }
 
      /**
      * @param afRMMarotageLanguage the fRMMarotageLanguage to set
      */
-    public static void setfRMMarotageLanguage(MarotageFRM afRMMarotageLanguage) {
+    public static void setfRMMarotageLanguage(InterpretadorFRM afRMMarotageLanguage) {
         fRMMarotageLanguage = afRMMarotageLanguage;
     }
     /**
@@ -72,11 +85,8 @@ public class MarotageFRM extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jtaCodigoFonte = new javax.swing.JTextArea();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jtaResultado = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jbtCompilarExecutar = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ML - Marotage Language");
@@ -84,11 +94,6 @@ public class MarotageFRM extends javax.swing.JFrame {
         jtaCodigoFonte.setColumns(20);
         jtaCodigoFonte.setRows(5);
         jScrollPane1.setViewportView(jtaCodigoFonte);
-
-        jtaResultado.setEditable(false);
-        jtaResultado.setColumns(20);
-        jtaResultado.setRows(5);
-        jScrollPane2.setViewportView(jtaResultado);
 
         jLabel1.setText("Crie seu código fonte");
 
@@ -99,8 +104,6 @@ public class MarotageFRM extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Saída");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -109,12 +112,10 @@ public class MarotageFRM extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 495, Short.MAX_VALUE)
-                        .addComponent(jbtCompilarExecutar))
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jbtCompilarExecutar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -125,11 +126,7 @@ public class MarotageFRM extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jbtCompilarExecutar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -139,16 +136,17 @@ public class MarotageFRM extends javax.swing.JFrame {
 
     private void jbtCompilarExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtCompilarExecutarActionPerformed
 
-        Stack<Double> pilha = new Stack<Double>();
+        
         try {
-            Lexico lex = new Lexico(jtaCodigoFonte.getText());
-            System.out.println(jtaCodigoFonte.getText());
+            Semantico.pilha = new Stack<Integer>();
+            Semantico.variaveis = new HashMap<String, Integer>();
+            String expressao = jtaCodigoFonte.getText();
+            Lexico lex = new Lexico(expressao);
             Sintatico sin = new Sintatico();
-            Semantico sem = new Semantico(pilha);
-            sin.parse(lex, sem);
-            
+            Semantico sem = new Semantico();
+            sin.parse(lex, sem);            
         } catch (LexicalError | SemanticError |SyntaticError ex) {
-            Logger.getLogger(MarotageLanguage.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Interpretador.class.getName()).log(Level.SEVERE, null, ex);
         } 
 
     }//GEN-LAST:event_jbtCompilarExecutarActionPerformed
@@ -170,32 +168,32 @@ public class MarotageFRM extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MarotageFRM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InterpretadorFRM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MarotageFRM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InterpretadorFRM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MarotageFRM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InterpretadorFRM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MarotageFRM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InterpretadorFRM.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MarotageFRM().setVisible(true);
+                new InterpretadorFRM().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton jbtCompilarExecutar;
     private javax.swing.JTextArea jtaCodigoFonte;
-    public javax.swing.JTextArea jtaResultado;
     // End of variables declaration//GEN-END:variables
 
    

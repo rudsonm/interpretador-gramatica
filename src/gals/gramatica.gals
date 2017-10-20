@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Full
-Input = Stream
+Input = String
 Parser = SLR
 #RegularDefinitions
 ignoraveis: [\s\n\r\t]+
@@ -36,13 +36,12 @@ fim: ";"
 <B>
 <C>
 <D>
-<E>
 #Grammar
 <comandos> ::= <comandos> <comando> | <comando>;
 <comando> ::= <atribuir> | <exibir>;
-<exibir> ::= #11imprimir #8abre #1variavel #9fecha #10fim;
-<atribuir> ::= #1variavel #7recebe <A> #10fim | #1variavel #10fim;
-<A> ::= <A> #2mais <B> | <A> #3menos <B> | <B>;
-<B> ::= <B> #4mult <C> | <B> #5div <C> | <B> #6exponenciacao <C> | <C>;
-<C> ::= #3menos <C> | <D> ;
-<D> ::= #8abre <A> #9fecha | #0numero | #1variavel;
+<exibir> ::= imprimir abre variavel #8 fecha fim;
+<atribuir> ::= variavel #10 recebe <A> #9 fim | <A>;
+<A> ::= <A> mais <B> #2 | <A> menos #3 <B> | <B>;
+<B> ::= <B> mult <D> #4 | <B> div <D> #5 | <D>;
+<D> ::= <D> exponenciacao <C> #6 | <C>;
+<C> ::= abre <A> fecha #7 | numero #0 | variavel #1; 
